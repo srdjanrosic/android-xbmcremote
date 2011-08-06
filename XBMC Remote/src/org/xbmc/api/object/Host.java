@@ -28,26 +28,13 @@ import java.io.Serializable;
  * 
  * @author Team XBMC
  */
-public class Host implements Serializable {
+public class Host extends org.xbmc.android.remote.lib.api.object.Host implements Serializable {
 	
 	public static final int DEFAULT_HTTP_PORT = 8080;
-	public static final int DEFAULT_EVENTSERVER_PORT = 9777;
 	public static final int DEFAULT_TIMEOUT = 5000;
 	public static final int DEFAULT_WOL_WAIT = 40;
 	public static final int DEFAULT_WOL_PORT = 9;
 	
-	/**
-	 * Database ID
-	 */
-	public int id;
-	/**
-	 * Name (description/label) of the host
-	 */
-	public String name;
-	/**
-	 * IP address or host name of the host
-	 */
-	public String addr;
 	/**
 	 * HTTP API Port
 	 */
@@ -61,21 +48,9 @@ public class Host implements Serializable {
 	 */
 	public String pass;
 	/**
-	 * Event server port
-	 */
-	public int esPort = DEFAULT_EVENTSERVER_PORT;
-	/**
 	 * TCP socket read timeout in milliseconds
 	 */
 	public int timeout = DEFAULT_TIMEOUT;
-	/**
-	 * If this host is only available through wifi
-	 */
-	public boolean wifi_only = false;
-	/**
-	 * If wifi only is true there might be an access point specified to connect to
-	 */
-	public String access_point;
 	/**
 	 * The MAC address of this host
 	 */

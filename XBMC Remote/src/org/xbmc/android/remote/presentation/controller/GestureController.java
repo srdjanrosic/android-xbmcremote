@@ -2,10 +2,13 @@ package org.xbmc.android.remote.presentation.controller;
 
 import java.io.IOException;
 
+import org.xbmc.android.remote.business.EventClientManager;
 import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.lib.presentation.controller.IController;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.eventclient.ButtonCodes;
+import org.xbmc.httpapi.WifiStateException;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,7 +21,7 @@ public class GestureController extends AbstractController implements INotifiable
 	private long mTimestamp = 0;
 	
 	public GestureController(Context context) {
-		mEventClientManager = ManagerFactory.getEventClientManager(this);
+		mEventClientManager = EventClientManager.getInstance(this, context);
 	}
 	
 	/**
@@ -32,7 +35,10 @@ public class GestureController extends AbstractController implements INotifiable
 			return true;
 		} catch (IOException e) {
 			return false;
-		}
+		} catch (WifiStateException e) {
+            e.printStackTrace();
+            return false;
+        }
 	}
 	
 	
@@ -87,7 +93,10 @@ public class GestureController extends AbstractController implements INotifiable
 			}
 		} catch (IOException e) {
 			return false;
-		}
+		} catch (WifiStateException e) {
+            e.printStackTrace();
+            return false;
+        }
 	}
 
 	public void onActivityPause() {

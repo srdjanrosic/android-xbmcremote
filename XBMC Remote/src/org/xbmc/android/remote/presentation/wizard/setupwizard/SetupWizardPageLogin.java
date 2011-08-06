@@ -69,7 +69,7 @@ public class SetupWizardPageLogin extends WizardPage<Host> {
 			public void onClick(View v) {
 				getInput().user = username.getText().toString();
 				getInput().pass = password.getText().toString();
-				ClientFactory.resetClient(getInput());
+				ClientFactory.getInstance().resetClient(getInput());
 				testConnection();
 			}
 		};

@@ -104,7 +104,7 @@ public abstract class AbstractManager implements INotifiableManager {
 	 * @throws WifiStateException 
 	 */
 	protected IInfoClient info(Context context) throws WifiStateException {
-		return ClientFactory.getInfoClient(this, context);
+		return ClientFactory.getInstance().getInfoClient(this, context);
 	}
 	
 	/**
@@ -114,7 +114,7 @@ public abstract class AbstractManager implements INotifiableManager {
 	 * @throws WifiStateException 
 	 */
 	protected IControlClient control(Context context) throws WifiStateException {
-		return ClientFactory.getControlClient(this, context);
+		return ClientFactory.getInstance().getControlClient(this, context);
 	}
 	
 	/**
@@ -124,7 +124,7 @@ public abstract class AbstractManager implements INotifiableManager {
 	 * @throws WifiStateException 
 	 */
 	protected IVideoClient video(Context context) throws WifiStateException {
-		return ClientFactory.getVideoClient(this, context);
+		return ClientFactory.getInstance().getVideoClient(this, context);
 	}
 	
 	/**
@@ -134,11 +134,11 @@ public abstract class AbstractManager implements INotifiableManager {
 	 * @throws WifiStateException 
 	 */
 	protected IMusicClient music(Context context) throws WifiStateException {
-		return ClientFactory.getMusicClient(this, context);
+		return ClientFactory.getInstance().getMusicClient(this, context);
 	}
 	
 	protected ITvShowClient shows(Context context) throws WifiStateException {
-		return ClientFactory.getTvShowClient(this, context);
+		return ClientFactory.getInstance().getTvShowClient(this, context);
 	}
 	
 	/**

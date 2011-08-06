@@ -21,19 +21,10 @@
 
 package org.xbmc.android.remote.presentation.activity;
 
-import java.io.IOException;
-
-import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.SettingsController;
-import org.xbmc.api.business.IEventClientManager;
-import org.xbmc.eventclient.ButtonCodes;
 
-import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceActivity;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 
 /**
  * Because we can't add menus to child PreferenceScreens, we're forced to 
@@ -41,67 +32,10 @@ import android.view.MenuItem;
  * 
  * @author Team XBMC
  */
-public class HostSettingsActivity extends PreferenceActivity {
+public class HostSettingsActivity extends org.xbmc.android.remote.lib.presentation.activity.HostSettingsActivity {
 	
-	private ConfigurationManager mConfigurationManager;
-	private SettingsController mSettingsController;
+    protected SettingsController getSettingsControllerInstance(PreferenceActivity activity, Handler handler) {
+        return new SettingsController(activity, handler);
+    }
 	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setTitle("XBMC Hosts");
-		mSettingsController = new SettingsController(this, new Handler());
-		mConfigurationManager = ConfigurationManager.getInstance(this);
-		setPreferenceScreen(mSettingsController.createHostsPreferences(getPreferenceManager().createPreferenceScreen(this), this));
-	}
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		mSettingsController.onCreateOptionsMenu(menu);
-		return super.onCreateOptionsMenu(menu);
-	}
-	
-	@Override
-	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		mSettingsController.onMenuItemSelected(featureId, item);
-		return super.onMenuItemSelected(featureId, item);
-	}
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		mSettingsController.onActivityResume(this);
-		mSettingsController.updateSummaries();
-		mConfigurationManager.onActivityResume(this);
-		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(mSettingsController);
-	}
-	
-	@Override
-	protected void onPause() {
-		super.onPause();
-		// Unregister the listener whenever a key changes
-		getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(mSettingsController);
-		mSettingsController.onActivityPause();
-		mConfigurationManager.onActivityPause();
-	}
-	
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		IEventClientManager client = ManagerFactory.getEventClientManager(mSettingsController);
-		try {
-			switch (keyCode) {
-				case KeyEvent.KEYCODE_VOLUME_UP:
-					client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
-					return true;
-				case KeyEvent.KEYCODE_VOLUME_DOWN:
-					client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
-					return true;
-			}
-		} catch (IOException e) {
-			client.setController(null);
-			return false;
-		}
-		client.setController(null);
-		return super.onKeyDown(keyCode, event);
-	}
 }

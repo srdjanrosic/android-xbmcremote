@@ -24,9 +24,11 @@ package org.xbmc.android.remote.presentation.activity;
 import java.io.IOException;
 
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.business.EventClientManager;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.AbstractController;
-import org.xbmc.android.remote.presentation.controller.IController;
+import org.xbmc.android.remote.lib.presentation.activity.ConfigurationManager;
+import org.xbmc.android.remote.lib.presentation.controller.IController;
 import org.xbmc.android.remote.presentation.controller.ListController;
 import org.xbmc.android.remote.presentation.controller.TvShowListController;
 import org.xbmc.android.util.KeyTracker;
@@ -41,6 +43,7 @@ import org.xbmc.api.object.TvShow;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.eventclient.ButtonCodes;
+import org.xbmc.httpapi.WifiStateException;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -242,7 +245,7 @@ public class TvShowDetailsActivity extends Activity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		IEventClientManager client = ManagerFactory.getEventClientManager(mTvShowDetailsController);
+		IEventClientManager client = EventClientManager.getInstance(mTvShowDetailsController, getApplicationContext());
 		try {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_VOLUME_UP:
@@ -255,7 +258,10 @@ public class TvShowDetailsActivity extends Activity {
 		} catch (IOException e) {
 			client.setController(null);
 			return false;
-		}
+		} catch (WifiStateException e) {
+            e.printStackTrace();
+            return false;
+        }
 		client.setController(null);
 		boolean handled =  (mKeyTracker != null)?mKeyTracker.doKeyDown(keyCode, event):false;
 		return handled || super.onKeyDown(keyCode, event);

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.Command;
+import org.xbmc.android.remote.business.EventClientManager;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.wizard.Wizard;
 import org.xbmc.android.remote.presentation.wizard.WizardPage;
@@ -15,6 +16,7 @@ import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.Host;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.eventclient.ButtonCodes;
+import org.xbmc.httpapi.WifiStateException;
 
 import android.content.Context;
 import android.os.Handler;
@@ -79,7 +81,7 @@ public class SetupWizardPage3 extends WizardPage<Host> {
 	@Override
 	public void show() {
 		super.show();
-		ClientFactory.resetClient(getInput());
+		ClientFactory.getInstance().resetClient(getInput());
 		mHandler = new Handler();
 		INotifiableController controller = new INotifiableController() {
 			public void runOnUI(Runnable action) {
@@ -101,7 +103,7 @@ public class SetupWizardPage3 extends WizardPage<Host> {
 			}
 		});
 		control = ManagerFactory.getControlManager(controller);
-		event = ManagerFactory.getEventClientManager(controller);
+		event = EventClientManager.getInstance(controller, getContext());
 		testEventServer();
 	}
 
@@ -111,7 +113,9 @@ public class SetupWizardPage3 extends WizardPage<Host> {
 			event.sendButton("R1", ButtonCodes.REMOTE_MUTE, false, true, true, (short) 0, (byte) 0);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		} catch (WifiStateException e) {
+            e.printStackTrace();
+        }
 		control.getVolume(new DataResponse<Integer>() {
 			@Override
 			public void run() {
@@ -123,7 +127,9 @@ public class SetupWizardPage3 extends WizardPage<Host> {
 						event.sendButton("R1", ButtonCodes.REMOTE_MUTE, false, true, true, (short) 0, (byte) 0);
 					} catch (IOException e) {
 						e.printStackTrace();
-					}
+					} catch (WifiStateException e) {
+                        e.printStackTrace();
+                    }
 					setCanFinish(true);
 				}else{
 					//we couldn't mute xbmc through the eventserver, so display some help.

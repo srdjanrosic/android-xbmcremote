@@ -24,7 +24,9 @@ package org.xbmc.android.remote.presentation.activity;
 import java.io.IOException;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.business.EventClientManager;
+import org.xbmc.android.remote.lib.presentation.activity.ConfigurationManager;
+import org.xbmc.android.remote.presentation.controller.HostChangerHelper;
 import org.xbmc.android.remote.presentation.controller.HomeController;
 import org.xbmc.android.remote.presentation.controller.HomeController.ProgressThread;
 import org.xbmc.android.util.ImportUtilities;
@@ -33,6 +35,7 @@ import org.xbmc.android.util.KeyTracker.Stage;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.eventclient.ButtonCodes;
+import org.xbmc.httpapi.WifiStateException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -97,7 +100,7 @@ public class HomeActivity extends Activity {
 		mHomeController = new HomeController(this, new Handler(), menuGrid);
 		mHomeController.setupVersionHandler(new Handler(), versionButton, menuGrid);
 		
-		mEventClientManager = ManagerFactory.getEventClientManager(mHomeController);
+		mEventClientManager = EventClientManager.getInstance(mHomeController, getApplicationContext());
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 		
 		versionButton.setText("Connecting...");
@@ -139,7 +142,7 @@ public class HomeActivity extends Activity {
 			startActivity(new Intent(this, AboutActivity.class));
 			return true;
 		case MENU_SWITCH_XBMC:
-			mHomeController.openHostChanger();
+			new HostChangerHelper(this);
 			return true;
 		case MENU_SETTINGS:
 			startActivity(new Intent(this, SettingsActivity.class));
@@ -266,7 +269,10 @@ public class HomeActivity extends Activity {
 			}
 		} catch (IOException e) {
 			return false;
-		}
+		} catch (WifiStateException e) {
+            e.printStackTrace();
+            return false;
+        }
 		return super.onKeyDown(keyCode, event);
 	}
 	

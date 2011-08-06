@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.lib.presentation.controller.IController;
 import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.widget.GridPosterItemView;
 import org.xbmc.android.util.ImportUtilities;

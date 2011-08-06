@@ -43,8 +43,12 @@ import android.util.Log;
  * 
  * @author Team XBMC
  */
-public abstract class HostFactory {
+public abstract class HostFactory extends org.xbmc.android.remote.lib.util.HostFactory {
 	
+    public static void getWhich() {
+        Log.d(TAG, "full thing");
+    }
+    
 	/**
 	 * The currently used host
 	 */
@@ -59,6 +63,7 @@ public abstract class HostFactory {
 	/**
 	 * Returns all hosts
 	 * @param activity Reference to activity
+	 * @return 
 	 * @return List of all hosts
 	 */
 	public static ArrayList<Host> getHosts(Context context) {
@@ -176,7 +181,7 @@ public abstract class HostFactory {
 		}
 		ed.commit();
 		host = h;
-		ClientFactory.resetClient(h);
+		ClientFactory.getInstance().resetClient(h);
 	}
 	
 	/**

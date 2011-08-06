@@ -68,7 +68,7 @@ abstract public class AbstractThread extends Thread {
 	 * @throws WifiStateException 
 	 */
 	protected static IMusicClient music(INotifiableManager manager, final Context context) throws WifiStateException {
-		return ClientFactory.getMusicClient(manager, context);
+		return ClientFactory.getInstance().getMusicClient(manager, context);
 	}	
 	
 	/**
@@ -78,7 +78,7 @@ abstract public class AbstractThread extends Thread {
 	 * @throws WifiStateException 
 	 */
 	protected static IVideoClient video(INotifiableManager manager, final Context context) throws WifiStateException {
-		return ClientFactory.getVideoClient(manager, context);
+		return ClientFactory.getInstance().getVideoClient(manager, context);
 	}	
 	
 	/**
@@ -88,7 +88,7 @@ abstract public class AbstractThread extends Thread {
 	 * @throws WifiStateException 
 	 */
 	protected static ITvShowClient tvshow(INotifiableManager manager, final Context context) throws WifiStateException {
-		return ClientFactory.getTvShowClient(manager, context);
+		return ClientFactory.getInstance().getTvShowClient(manager, context);
 	}	
 	
 	/**

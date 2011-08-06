@@ -24,7 +24,9 @@ package org.xbmc.android.remote.presentation.activity;
 import java.io.IOException;
 
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.business.EventClientManager;
 import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.lib.presentation.activity.ConfigurationManager;
 import org.xbmc.android.remote.presentation.controller.AlbumListController;
 import org.xbmc.android.remote.presentation.controller.ArtistListController;
 import org.xbmc.android.remote.presentation.controller.FileListController;
@@ -35,6 +37,7 @@ import org.xbmc.android.widget.slidingtabs.SlidingTabHost;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost.OnTabChangeListener;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.eventclient.ButtonCodes;
+import org.xbmc.httpapi.WifiStateException;
 
 import android.content.Context;
 import android.content.Intent;
@@ -277,7 +280,7 @@ public class MusicLibraryActivity extends SlidingTabActivity implements ViewTree
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		IEventClientManager client = ManagerFactory.getEventClientManager(mAlbumController);
+		IEventClientManager client = EventClientManager.getInstance(mAlbumController, getApplicationContext());
 		try {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_VOLUME_UP:
@@ -290,7 +293,10 @@ public class MusicLibraryActivity extends SlidingTabActivity implements ViewTree
 		} catch (IOException e) {
 			client.setController(null);
 			return false;
-		}
+		} catch (WifiStateException e) {
+            e.printStackTrace();
+            return false;
+        }
 		client.setController(null);
 		return super.onKeyDown(keyCode, event);
 	}

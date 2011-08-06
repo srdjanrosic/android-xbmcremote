@@ -23,7 +23,7 @@ public class SetupWizard extends Wizard<Host> {
 	@Override
 	protected void doFinish() {
 		HostFactory.addHost(this, host);
-		ClientFactory.resetClient(host);
+		ClientFactory.getInstance().resetClient(host);
 	}
 
 }

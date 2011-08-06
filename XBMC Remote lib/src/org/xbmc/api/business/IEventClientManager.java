@@ -2,6 +2,8 @@ package org.xbmc.api.business;
 
 import java.io.IOException;
 
+import org.xbmc.httpapi.WifiStateException;
+
 /**
  * XBMC Event Client Class
  * 
@@ -12,7 +14,7 @@ import java.io.IOException;
  * 
  * @author Team XBMC
  */
-public interface IEventClientManager extends IManager {
+public interface IEventClientManager extends IManager, INotifiableManager {
 	
 
 	/**
@@ -20,9 +22,10 @@ public interface IEventClientManager extends IManager {
 	 * 
 	 * @param title    Message title
 	 * @param message  The actual message
+	 * @throws WifiStateException 
 	 */
-	public void sendNotification(String title, String message) throws IOException;
-	public void sendNotification(String title, String message, byte icontype, byte[] icondata) throws IOException;
+	public void sendNotification(String title, String message) throws IOException, WifiStateException;
+	public void sendNotification(String title, String message, byte icontype, byte[] icondata) throws IOException, WifiStateException;
 
 	/**
 	 * Sends a Button event
@@ -39,8 +42,9 @@ public interface IEventClientManager extends IManager {
 	 * @param amount Unimplemented for now; in the future it will be used for
 	 *               specifying magnitude of analog key press events
 	 * @param axis
+	 * @throws WifiStateException 
 	 */
-	public void sendButton(short code, boolean repeat, boolean down, boolean queue, short amount, byte axis) throws IOException;
+	public void sendButton(short code, boolean repeat, boolean down, boolean queue, short amount, byte axis) throws IOException, WifiStateException;
 
 	/**
 	 * Sends a Button event
@@ -78,18 +82,20 @@ public interface IEventClientManager extends IManager {
 	 *            Unimplemented for now; in the future it will be used for
 	 *            specifying magnitude of analog key press events
 	 * @param axis
+	 * @throws WifiStateException 
 	 */
 	public void sendButton(String map_name, String button_name, boolean repeat,
 			boolean down, boolean queue, short amount, byte axis)
-			throws IOException;
+			throws IOException, WifiStateException;
 
 	/**
 	 * Sets the mouse position in XBMC
 	 * 
 	 * @param x  Horizontal position ranging from 0 to 65535
 	 * @param y  Vertical position ranging from 0 to 65535
+	 * @throws WifiStateException 
 	 */
-	public void sendMouse(int x, int y) throws IOException;
+	public void sendMouse(int x, int y) throws IOException, WifiStateException;
 
 	/**
 	 * Tells XBMC to log the message to xbmc.log with the loglevel as specified.
@@ -106,15 +112,17 @@ public interface IEventClientManager extends IManager {
 	 *            </ul>
 	 * @param logmessage
 	 *            The message to log
+	 * @throws WifiStateException 
 	 */
-	public void sendLog(byte loglevel, String logmessage) throws IOException;
+	public void sendLog(byte loglevel, String logmessage) throws IOException, WifiStateException;
 
 	/**
 	 * Tells XBMC to do the action specified, based on the type it knows were it
 	 * needs to be sent.
 	 * 
 	 * @param actionmessage Actionmessage (as in scripting/skinning)
+	 * @throws WifiStateException 
 	 */
-	public void sendAction(String actionmessage) throws IOException;
+	public void sendAction(String actionmessage) throws IOException, WifiStateException;
 
 }

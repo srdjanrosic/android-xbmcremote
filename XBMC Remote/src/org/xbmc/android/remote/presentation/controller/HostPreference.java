@@ -26,21 +26,14 @@ import org.xbmc.android.util.HostFactory;
 import org.xbmc.android.util.MacAddressResolver;
 import org.xbmc.api.object.Host;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Handler;
-import android.preference.DialogPreference;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 /**
@@ -48,77 +41,23 @@ import android.widget.Toast;
  * 
  * @author Team XBMC
  */
-public class HostPreference extends DialogPreference {
+public class HostPreference extends org.xbmc.android.remote.lib.presentation.controller.HostPreference {
+    
+    // These are in addition to ones already defined.
+	protected EditText  mPortView, mUserView, mPassView, mTimeoutView,  mMacAddrView, mWolWaitView, mWolPortView;
 	
-	private EditText mNameView, mHostView, mPortView, mUserView, mPassView, 
-				mEsPortView, mTimeoutView, mAccPointView, mMacAddrView, mWolWaitView, mWolPortView;
+	//protected Host mHost;
 	
-	private CheckBox mWifiOnlyView;
-	
-	private Host mHost;
-	private Context mContext;
-	
-	public static final String ID_PREFIX = "settings_host_";
-
 	public HostPreference(Context context) {
-		this(context, null);
-	}
-	
+        super(context);
+    }
+
 	public HostPreference(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		
-		mContext = context;
-		
-		setDialogLayoutResource(R.layout.preference_host);
-		setDialogTitle("Add new host");
-		setDialogIcon(R.drawable.bubble_add);
+	    super(context,attrs);
 	}
 	
-	public void create(PreferenceManager preferenceManager) {
-		onAttachedToHierarchy(preferenceManager);
-		showDialog(null);
-	}
-	
-	public void setHost(Host host) {
-		mHost = host;
-		setTitle(host.name);
-		setSummary(host.getSummary());
-		setDialogTitle(host.name);
-		setDialogIcon(null);
-	}
-	
-	public Host getHost() {
-		return mHost;
-	}
-	
-	@Override
-	protected View onCreateView(final ViewGroup parent) {
-		final ViewGroup view = (ViewGroup)super.onCreateView(parent);
-		if (mHost != null) {
-			ImageView btn = new ImageView(getContext());
-			btn.setImageResource(R.drawable.bubble_del_up);
-			btn.setClickable(true);
-			btn.setOnClickListener(new OnClickListener() {
-				public void onClick(View v) {
-					AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-					builder.setMessage("Are you sure you want to delete the XBMC host \"" + mHost.name + "\"?");
-					builder.setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							HostFactory.deleteHost(getContext(), mHost);
-							((PreferenceActivity)view.getContext()).getPreferenceScreen().removePreference(HostPreference.this);
-						}
-					});
-					builder.setNegativeButton("Nah.", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							dialog.cancel();
-						}
-					});
-					builder.create().show();
-				}
-			});
-			view.addView(btn);
-		}
-		return view;
+	protected void deleteHostFactoryHost(Context context, Host host) {
+	    HostFactory.deleteHost(context, host);
 	}
 	
 	@Override
@@ -166,17 +105,17 @@ public class HostPreference extends DialogPreference {
 		if (mHost != null) {
 			mNameView.setText(mHost.name);
 			mHostView.setText(mHost.addr);
-			mPortView.setText(String.valueOf(mHost.port));
-			mUserView.setText(mHost.user);
-			mPassView.setText(mHost.pass);
+			mPortView.setText(String.valueOf(((Host)mHost).port));
+			mUserView.setText(((Host)mHost).user);
+			mPassView.setText(((Host)mHost).pass);
 			
 			mEsPortView.setText(String.valueOf(mHost.esPort));
-			mTimeoutView.setText(String.valueOf(mHost.timeout));
-			mMacAddrView.setText(mHost.mac_addr);
+			mTimeoutView.setText(String.valueOf(((Host)mHost).timeout));
+			mMacAddrView.setText(((Host)mHost).mac_addr);
 			mAccPointView.setText(mHost.access_point);
 			mWifiOnlyView.setChecked(mHost.wifi_only);
-			mWolPortView.setText(String.valueOf(mHost.wol_port));
-			mWolWaitView.setText(String.valueOf(mHost.wol_wait));
+			mWolPortView.setText(String.valueOf(((Host)mHost).wol_port));
+			mWolWaitView.setText(String.valueOf(((Host)mHost).wol_wait));
 		} else {
 			//set defaults:
 			mPortView.setText("" + Host.DEFAULT_HTTP_PORT);

@@ -24,13 +24,16 @@ package org.xbmc.android.remote.presentation.activity;
 import java.io.IOException;
 
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.business.EventClientManager;
 import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.lib.presentation.activity.ConfigurationManager;
 import org.xbmc.android.remote.presentation.controller.PlaylistController;
 import org.xbmc.android.util.KeyTracker;
 import org.xbmc.android.util.OnLongPressBackKeyTracker;
 import org.xbmc.android.util.KeyTracker.Stage;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.eventclient.ButtonCodes;
+import org.xbmc.httpapi.WifiStateException;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -163,7 +166,7 @@ public class PlaylistActivity extends Activity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		IEventClientManager client = ManagerFactory.getEventClientManager(mPlaylistController);
+		IEventClientManager client = EventClientManager.getInstance(mPlaylistController, getApplicationContext());
 		try {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_VOLUME_UP:
@@ -176,7 +179,10 @@ public class PlaylistActivity extends Activity {
 		} catch (IOException e) {
 			client.setController(null);
 			return false;
-		}
+		} catch (WifiStateException e) {
+            e.printStackTrace();
+            return false;
+        }
 		client.setController(null);
 		boolean handled =  (mKeyTracker != null)?mKeyTracker.doKeyDown(keyCode, event):false;
 		return handled || super.onKeyDown(keyCode, event);

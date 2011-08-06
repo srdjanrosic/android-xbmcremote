@@ -26,6 +26,7 @@ import java.io.IOException;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.Command;
+import org.xbmc.android.remote.business.EventClientManager;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.util.SmsMmsMessage;
 import org.xbmc.android.util.SmsPopupUtils;
@@ -37,6 +38,7 @@ import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.Packet;
+import org.xbmc.httpapi.WifiStateException;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -74,7 +76,7 @@ public class AndroidBroadcastReceiver extends BroadcastReceiver {
 		if(!hasTelephony) return;
 		
 		String action = intent.getAction();
-		final IEventClientManager eventClient = ManagerFactory.getEventClientManager(null);
+		final IEventClientManager eventClient = EventClientManager.getInstance(null, null);
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		// currently no new connection to the event server is opened
 		if (eventClient != null) {
@@ -117,7 +119,9 @@ public class AndroidBroadcastReceiver extends BroadcastReceiver {
 										eventClient.sendButton("R1", ButtonCodes.REMOTE_PAUSE, false, true, true, (short) 0, (byte) 0);
 									} catch (IOException e) {
 										((INotifiableManager)cm).onError(e);
-									}
+									} catch (WifiStateException e) {
+                                        e.printStackTrace();
+                                    }
 									sPlayState = PLAY_STATE_PAUSED;
 								}
 							}
@@ -152,12 +156,12 @@ public class AndroidBroadcastReceiver extends BroadcastReceiver {
 					}
 				}
 			} catch (NotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			} catch (WifiStateException e) {
+                e.printStackTrace();
+            }
 		}
 	}
 	

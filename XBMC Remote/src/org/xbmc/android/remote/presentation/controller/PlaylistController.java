@@ -26,8 +26,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.business.EventClientManager;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.business.NowPlayingPollerThread;
+import org.xbmc.android.remote.lib.presentation.controller.IController;
 import org.xbmc.android.remote.presentation.activity.PlaylistActivity;
 import org.xbmc.android.remote.presentation.widget.OneLabelItemView;
 import org.xbmc.android.util.ConnectionFactory;
@@ -41,6 +43,7 @@ import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.object.INamedResource;
 import org.xbmc.api.object.Song;
 import org.xbmc.eventclient.ButtonCodes;
+import org.xbmc.httpapi.WifiStateException;
 import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.client.VideoClient;
 
@@ -99,7 +102,7 @@ public class PlaylistController extends ListController implements IController, C
 		mMusicManager = ManagerFactory.getMusicManager(this);
 		mVideoManager = ManagerFactory.getVideoManager(this);
 		mControlManager = ManagerFactory.getControlManager(this);
-		mEventClient = ManagerFactory.getEventClientManager(this);
+		mEventClient = EventClientManager.getInstance(this, mPlaylistActivity);
 		mNowPlayingHandler = new Handler(this);
 		
 		if (!isCreated()) {
@@ -278,7 +281,10 @@ public class PlaylistController extends ListController implements IController, C
 							mControlManager.setPlaylistPos(doNothing, mLastPosition < 0 ? 0 : mLastPosition, mActivity.getApplicationContext());
 							break;
 					}
-				} catch (IOException e) { }
+				} catch (IOException e) {
+				} catch (WifiStateException e) {
+                    e.printStackTrace();
+                }
 			}
 		});
 	}
@@ -299,7 +305,9 @@ public class PlaylistController extends ListController implements IController, C
 			try {
 				mEventClient.sendButton("R1", mAction, false, true, true, (short) 0, (byte) 0);
 			} catch (IOException e) {
-			}
+			} catch (WifiStateException e) {
+                e.printStackTrace();
+            }
 		}
 	}
 	

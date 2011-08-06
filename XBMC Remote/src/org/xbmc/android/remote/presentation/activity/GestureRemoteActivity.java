@@ -22,6 +22,7 @@
 package org.xbmc.android.remote.presentation.activity;
 
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.lib.presentation.activity.ConfigurationManager;
 import org.xbmc.android.remote.presentation.controller.RemoteController;
 import org.xbmc.android.widget.gestureremote.GestureRemoteView;
 import org.xbmc.eventclient.ButtonCodes;
@@ -75,7 +76,7 @@ public class GestureRemoteActivity extends Activity {
 		topFrame.setForeground(null);
 		
 		GestureRemoteView view = (GestureRemoteView)findViewById(R.id.RemoteXboxGestureZone);	
-		mRemoteController = new RemoteController(getApplicationContext());
+		mRemoteController = new RemoteController(this);
 		view.setGestureListener(mRemoteController.startGestureThread(this.getApplicationContext()));
 		
 		mConfigurationManager = ConfigurationManager.getInstance(this);

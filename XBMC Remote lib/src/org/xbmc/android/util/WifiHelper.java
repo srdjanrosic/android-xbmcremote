@@ -2,7 +2,7 @@ package org.xbmc.android.util;
 
 import java.util.List;
 
-import org.xbmc.api.object.Host;
+import org.xbmc.android.remote.lib.api.object.Host;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

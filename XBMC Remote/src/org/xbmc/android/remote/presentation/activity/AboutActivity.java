@@ -24,9 +24,12 @@ package org.xbmc.android.remote.presentation.activity;
 import java.io.IOException;
 
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.business.EventClientManager;
 import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.lib.presentation.activity.ConfigurationManager;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.eventclient.ButtonCodes;
+import org.xbmc.httpapi.WifiStateException;
 
 import android.app.Activity;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -46,7 +49,7 @@ public class AboutActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.about);
 		try {
-			mEventClientManager = ManagerFactory.getEventClientManager(null);
+			mEventClientManager = EventClientManager.getInstance(null, getApplicationContext());
 			final String versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
 			final int versionCode = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
 			((TextView)findViewById(R.id.about_version)).setText("v" + versionName);
@@ -86,7 +89,10 @@ public class AboutActivity extends Activity {
 			}
 		} catch (IOException e) {
 			return false;
-		}
+		} catch (WifiStateException e) {
+            e.printStackTrace();
+            return false;
+        }
 		return super.onKeyDown(keyCode, event);
 	}
 }

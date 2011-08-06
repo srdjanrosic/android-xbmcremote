@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.lib.presentation.controller.IController;
 import org.xbmc.android.remote.presentation.activity.DialogFactory;
 import org.xbmc.android.remote.presentation.activity.MusicArtistActivity;
 import org.xbmc.android.remote.presentation.widget.OneLabelItemView;

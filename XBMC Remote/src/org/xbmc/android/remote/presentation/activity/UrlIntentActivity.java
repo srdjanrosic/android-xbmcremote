@@ -22,6 +22,7 @@
 package org.xbmc.android.remote.presentation.activity;
 
 
+import org.xbmc.android.remote.lib.presentation.activity.ConfigurationManager;
 import org.xbmc.android.remote.presentation.controller.UrlIntentController;
 
 import android.app.Activity;

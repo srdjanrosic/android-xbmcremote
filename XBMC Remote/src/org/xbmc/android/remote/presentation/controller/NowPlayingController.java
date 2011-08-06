@@ -23,8 +23,10 @@ package org.xbmc.android.remote.presentation.controller;
 
 import java.io.IOException;
 
+import org.xbmc.android.remote.business.EventClientManager;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.business.NowPlayingPollerThread;
+import org.xbmc.android.remote.lib.presentation.controller.IController;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.android.remote.presentation.activity.PlaylistActivity;
 import org.xbmc.android.util.ConnectionFactory;
@@ -37,6 +39,7 @@ import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.api.type.MediaType;
 import org.xbmc.api.type.SeekType;
 import org.xbmc.eventclient.ButtonCodes;
+import org.xbmc.httpapi.WifiStateException;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -66,7 +69,7 @@ public class NowPlayingController extends AbstractController implements INotifia
 		super.onCreate(activity, handler);
 		mNowPlayingActivity = activity;
 		mControlManager = ManagerFactory.getControlManager(this);
-		mEventClientManager = ManagerFactory.getEventClientManager(this);
+		mEventClientManager = EventClientManager.getInstance(this, activity.getApplicationContext());
 		mNowPlayingHandler = new Handler(this);
 	}
 	
@@ -173,7 +176,10 @@ public class NowPlayingController extends AbstractController implements INotifia
 							mControlManager.setPlaylistPos(doNothing, mLastPosition < 0 ? 0 : mLastPosition, mActivity.getApplicationContext());
 							break;
 					}
-				} catch (IOException e) { }
+				} catch (IOException e) {
+				} catch (WifiStateException e) {
+                    e.printStackTrace();
+                }
 			}
 		});
 		
@@ -201,7 +207,10 @@ public class NowPlayingController extends AbstractController implements INotifia
 		public void onClick(View v) {
 			try {
 				mEventClientManager.sendButton("R1", mAction, false, true, true, (short)0, (byte)0);
-			} catch (IOException e) { }
+			} catch (IOException e) {
+			} catch (WifiStateException e) {
+                e.printStackTrace();
+            }
 		}
 	}
 	

@@ -19,7 +19,7 @@
  *
  */
 
-package org.xbmc.android.remote.presentation.controller;
+package org.xbmc.android.remote.lib.presentation.controller;
 
 import android.app.Activity;
 

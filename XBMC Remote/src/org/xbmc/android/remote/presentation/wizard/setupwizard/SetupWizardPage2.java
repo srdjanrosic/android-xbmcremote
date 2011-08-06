@@ -54,7 +54,7 @@ public class SetupWizardPage2 extends WizardPage<Host> {
 	public void show() {
 		super.show();
 		showBusyMessage(getContext().getString(R.string.setup_wizard_checking_es_wait));
-		ClientFactory.resetClient(getInput());
+		ClientFactory.getInstance().resetClient(getInput());
 		info = ManagerFactory.getInfoManager(new INotifiableController() {
 
 			public void runOnUI(Runnable action) {

@@ -29,10 +29,9 @@ import org.xbmc.api.business.ITvShowManager;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.presentation.INotifiableController;
 
-public abstract class ManagerFactory {
-	
-	private static EventClientManager sEventClientManager = null;
-	
+import android.util.Log;
+
+public abstract class ManagerFactory {	
 	public static IInfoManager getInfoManager(INotifiableController controller) {
 		return ManagerThread.info(controller);
 	}
@@ -47,12 +46,5 @@ public abstract class ManagerFactory {
 	}
 	public static IMusicManager getMusicManager(INotifiableController controller) {
 		return ManagerThread.music(controller);
-	}
-	public static IEventClientManager getEventClientManager(INotifiableController controller) {
-		if (sEventClientManager == null) {
-			sEventClientManager = new EventClientManager();
-		}
-		sEventClientManager.setController(controller);
-		return sEventClientManager;
 	}
 }

@@ -79,7 +79,7 @@ public class SetupWizardPage1 extends WizardPage<Host> {
 		getInput().name = name.getText().toString().trim();
 		getInput().addr = ip.getText().toString().trim();
 		getInput().port = Integer.parseInt(port.getText().toString());
-		ClientFactory.resetClient(getInput());
+		ClientFactory.getInstance().resetClient(getInput());
 		final IInfoManager info = ManagerFactory
 				.getInfoManager(new INotifiableController() {
 					public void runOnUI(Runnable action) {
@@ -105,7 +105,7 @@ public class SetupWizardPage1 extends WizardPage<Host> {
 									errorMsg.setText("");
 									showNextPage();
 								}
-								ClientFactory.resetClient(currHost);
+								ClientFactory.getInstance().resetClient(currHost);
 								removeBusyMessage();
 								errorMsg.setText(getContext().getString(
 										R.string.setup_wizard_cant_connect)
@@ -119,7 +119,7 @@ public class SetupWizardPage1 extends WizardPage<Host> {
 			public void run() {
 				if (value != null && !value.equals("")) {
 					removeBusyMessage();
-					ClientFactory.resetClient(currHost);
+					ClientFactory.getInstance().resetClient(currHost);
 					errorMsg.setText("");
 					// setCanFinish(true);
 					showNextPage();

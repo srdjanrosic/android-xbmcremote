@@ -109,12 +109,12 @@ public class NowPlayingPollerThread extends Thread {
 			}
 		};
 		try {
-			mControl = ClientFactory.getControlClient(mManagerStub, context);
+			mControl = ClientFactory.getInstance().getControlClient(mManagerStub, context);
 		} catch (WifiStateException e2) {
 			mControl = null;
 		}
   	  	try {
-			mInfo = ClientFactory.getInfoClient(mManagerStub, context);
+			mInfo = ClientFactory.getInstance().getInfoClient(mManagerStub, context);
 		} catch (WifiStateException e1) {
 			mInfo = null;
 		}

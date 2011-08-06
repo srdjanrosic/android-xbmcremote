@@ -178,6 +178,7 @@ public class EventClient implements IEventClient {
 			mPingThread = new PingThread(hostAddress, hostPort, 20000);
 			mPingThread.start();
 		} catch (IOException e) {
+		    e.printStackTrace();
 		}
 
 	}

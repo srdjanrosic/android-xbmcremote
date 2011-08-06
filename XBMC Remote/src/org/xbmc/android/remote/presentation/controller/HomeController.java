@@ -29,6 +29,8 @@ import java.util.Observer;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.AbstractManager;
 import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.presentation.controller.HostChangerHelper;
+import org.xbmc.android.remote.lib.presentation.controller.IController;
 import org.xbmc.android.remote.presentation.activity.GestureRemoteActivity;
 import org.xbmc.android.remote.presentation.activity.HomeActivity;
 import org.xbmc.android.remote.presentation.activity.HostSettingsActivity;
@@ -136,7 +138,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 	public View.OnClickListener getOnHostChangeListener() {
 		return new OnClickListener() {
 			public void onClick(View v) {
-				openHostChanger();
+				new HostChangerHelper(mActivity);
 			}
 		};
 	}
@@ -173,7 +175,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 						final Button versionButton = (Button)mActivity.findViewById(R.id.home_version_button);
 						versionButton.setText("Connecting...");
 						Toast.makeText(mActivity.getApplicationContext(), "Changed host to " + host.toString() + ".", Toast.LENGTH_SHORT).show();
-						ClientFactory.resetClient(host);
+						ClientFactory.getInstance().resetClient(host);
 						mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION, mActivity.getApplicationContext());
 					}
 				}
@@ -300,7 +302,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 						break;
 					case HOME_ACTION_RECONNECT:
 						((Button)mActivity.findViewById(R.id.home_version_button)).setText("Reconnecting...");
-						ClientFactory.resetClient(host);
+						ClientFactory.getInstance().resetClient(host);
 						mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION, mActivity.getApplicationContext());
 						break;
 					case HOME_ACTION_WOL:

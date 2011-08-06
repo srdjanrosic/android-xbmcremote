@@ -21,100 +21,41 @@
 
 package org.xbmc.android.remote.business;
 
-import java.io.IOException;
-
 import org.xbmc.android.util.ClientFactory;
-import org.xbmc.api.business.DataResponse;
-import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.business.INotifiableManager;
-import org.xbmc.api.object.ICoverArt;
+import org.xbmc.api.data.IEventClient;
 import org.xbmc.api.presentation.INotifiableController;
+import org.xbmc.httpapi.WifiStateException;
 
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.util.Log;
 
 /**
  * Super class of the wrappers, keeps common code.
  * 
  * @author Team XBMC
  */
-public class EventClientManager implements INotifiableManager, IEventClientManager {
-	
+public class EventClientManager extends org.xbmc.android.remote.lib.business.EventClientManager {
+	protected IEventClient getEventClient(INotifiableManager manager, Context context) throws WifiStateException {
+	    Log.d(TAG, "Getting an EventClient ClientFactory");
+	    return ClientFactory.getInstance().getEventClient(manager, context);
+	}
+    
 	protected static final String TAG = "EventClientManager";
 	protected static final Boolean DEBUG = false;
 	
-	private INotifiableController mController = null;
-	
-	public void setController(INotifiableController controller) {
-		mController = controller;
+	protected static EventClientManager sInstance = null;
+
+	public static EventClientManager getInstance(INotifiableController controller, Context context) {
+	    Log.d(TAG, "Making and returning an EventClientManager");
+	    if (sInstance == null) {
+	        sInstance = new EventClientManager(controller, context);
+	    }
+	    return sInstance;
 	}
 
-	public void onMessage(int code, String message) {
-		onMessage(message);
-	}
-
-	public void sendAction(String actionmessage) throws IOException {
-		ClientFactory.getEventClient(this).sendAction(actionmessage);
-	}
-
-	public void sendButton(short code, boolean repeat, boolean down, boolean queue, short amount, byte axis) throws IOException {
-		ClientFactory.getEventClient(this).sendButton(code, repeat, down, queue, amount, axis);
-	}
-
-	public void sendButton(String mapName, String buttonName, boolean repeat, boolean down, boolean queue, short amount, byte axis) throws IOException {
-		ClientFactory.getEventClient(this).sendButton(mapName, buttonName, repeat, down, queue, amount, axis);
-	}
-
-	public void sendLog(byte loglevel, String logmessage) throws IOException {
-		ClientFactory.getEventClient(this).sendLog(loglevel, logmessage);
-	}
-
-	public void sendMouse(int x, int y) throws IOException {
-		ClientFactory.getEventClient(this).sendMouse(x, y);
-	}
-
-	public void sendNotification(String title, String message) throws IOException {
-		ClientFactory.getEventClient(this).sendNotification(title, message);
-	}
-
-	public void sendNotification(String title, String message, byte icontype, byte[] icondata) throws IOException {
-		ClientFactory.getEventClient(this).sendNotification(title, message, icontype, icondata);
+	public EventClientManager(INotifiableController controller, Context context) {
+	    super(controller, context);
 	}
 	
-	public void onError(Exception e) {
-		if (mController != null) {
-			mController.onError(e);
-		}
-	}
-
-	public void onMessage(String message) {
-		if (mController != null) {
-			mController.onMessage(message);
-		}
-	}
-
-	public void getCover(DataResponse<Bitmap> response, ICoverArt cover, int thumbSize, Bitmap defaultCover, final Context context, boolean b) {
-		// only a stub;
-	}
-
-	public void onWrongConnectionState(int state) {
-		if (mController != null) {
-			mController.onWrongConnectionState(state, null, null);
-		}
-	}
-
-	public void onFinish(DataResponse<?> response) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void onWrongConnectionState(int state, Command<?> cmd) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void retryAll() {
-		// TODO Auto-generated method stub
-		
-	}
 }

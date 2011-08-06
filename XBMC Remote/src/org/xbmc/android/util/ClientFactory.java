@@ -21,30 +21,40 @@
 
 package org.xbmc.android.util;
 
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.xbmc.android.util.ClientFactory;
+//import org.xbmc.android.util.ClientFactory.ClientFactoryHolder;
+import org.xbmc.android.util.HostFactory;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
-import org.xbmc.api.data.IEventClient;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.data.IMusicClient;
 import org.xbmc.api.data.ITvShowClient;
 import org.xbmc.api.data.IVideoClient;
 import org.xbmc.api.info.SystemInfo;
 import org.xbmc.api.object.Host;
-import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.HttpApi;
 import org.xbmc.httpapi.WifiStateException;
 
 import android.content.Context;
 import android.util.Log;
 
-public abstract class ClientFactory {
-	
+public class ClientFactory extends org.xbmc.android.remote.lib.util.ClientFactory {
+    // Singleton
+    protected static class ClientFactoryHolder {
+        public static ClientFactory instance = new ClientFactory();
+    }
+    public static ClientFactory getInstance() {
+        return ClientFactoryHolder.instance;
+    }
+
+    protected org.xbmc.android.remote.lib.api.object.Host getCurrentHostFromFactory() {
+        return HostFactory.host;
+    }
+    
+    
 	public static int XBMC_REV = -1;
 
 	public static final int MIN_JSONRPC_REV = 27770;
@@ -57,13 +67,9 @@ public abstract class ClientFactory {
 
 	private static HttpApi sHttpClient;
 //	private static JsonRpc sJsonClient;
-	private static EventClient sEventClient;
 	private static int sApiType = API_TYPE_UNSET;
 	
-	private static final String TAG = "ClientFactory";
-	private static final String NAME = "Android XBMC Remote";
-	
-	public static IInfoClient getInfoClient(INotifiableManager manager, Context context) throws WifiStateException {
+	public IInfoClient getInfoClient(INotifiableManager manager, Context context) throws WifiStateException {
 		assertWifiState(context);
 		probeQueryApiType(manager);
 		switch (sApiType) {
@@ -76,19 +82,19 @@ public abstract class ClientFactory {
 		}
 	}
 	
-	public static IControlClient getControlClient(INotifiableManager manager, Context context) throws WifiStateException {
+	public IControlClient getControlClient(INotifiableManager manager, Context context) throws WifiStateException {
 		assertWifiState(context);
 		probeQueryApiType(manager);
 		return createHttpClient(manager).control;
 	}
 	
-	public static IVideoClient getVideoClient(INotifiableManager manager, Context context) throws WifiStateException {
+	public IVideoClient getVideoClient(INotifiableManager manager, Context context) throws WifiStateException {
 		assertWifiState(context);
 		probeQueryApiType(manager);
 		return createHttpClient(manager).video;
 	}
 	
-	public static IMusicClient getMusicClient(INotifiableManager manager, Context context) throws WifiStateException {
+	public IMusicClient getMusicClient(INotifiableManager manager, Context context) throws WifiStateException {
 		assertWifiState(context);
 		probeQueryApiType(manager);
 		switch (sApiType) {
@@ -101,32 +107,17 @@ public abstract class ClientFactory {
 		}
 	}
 	
-	public static ITvShowClient getTvShowClient(INotifiableManager manager, Context context) throws WifiStateException {
+	public ITvShowClient getTvShowClient(INotifiableManager manager, Context context) throws WifiStateException {
 		assertWifiState(context);
 		probeQueryApiType(manager);
 		return createHttpClient(manager).shows;
-	}
-	
-	private static void assertWifiState(Context context) throws WifiStateException {
-		if (context != null && HostFactory.host != null && HostFactory.host.wifi_only){
-			final int state = WifiHelper.getInstance(context).getWifiState();
-			switch (state) {
-			case WifiHelper.WIFI_STATE_DISABLED:
-			case WifiHelper.WIFI_STATE_UNKNOWN:
-				throw new WifiStateException(state);
-			}
-		}
-	}
-	
-	public static IEventClient getEventClient(INotifiableManager manager) {
-		return createEventClient(manager);
 	}
 	
 	/**
 	 * Resets the client so it has to re-read the settings and recreate the instance.
 	 * @param host New host settings, can be null.
 	 */
-	public static void resetClient(Host host) {
+	public void resetClient(Host host) {
 		sApiType = API_TYPE_UNSET;
 		if (sHttpClient != null) {
 			sHttpClient.setHost(host);
@@ -134,20 +125,7 @@ public abstract class ClientFactory {
 			Log.w(TAG, "Not updating http client's host because no instance is set yet.");
 		}
 		Log.i(TAG, "Resetting client to " + (host == null ? "<nullhost>" : host.addr));
-		if (sEventClient != null) {
-			try {
-				if (host != null) {
-					InetAddress addr = Inet4Address.getByName(host.addr);
-					sEventClient.setHost(addr, host.esPort > 0 ? host.esPort : Host.DEFAULT_EVENTSERVER_PORT);
-				} else {
-					sEventClient.setHost(null, 0);
-				}
-			} catch (UnknownHostException e) {
-				Log.e(TAG, "Unknown host: " + (host == null ? "<nullhost>" : host.addr));
-			}
-		} else {
-			Log.w(TAG, "Not updating event client's host because no instance is set yet.");
-		}
+		super.resetClient(host);
 	}
 
 	/**
@@ -157,8 +135,8 @@ public abstract class ClientFactory {
 	 * @param manager Upper layer reference
 	 * @return HTTP client
 	 */
-	private static HttpApi createHttpClient(final INotifiableManager manager) {
-		final Host host = HostFactory.host;
+	private HttpApi createHttpClient(final INotifiableManager manager) {
+		final Host host = (Host) getCurrentHostFromFactory();
 		if (sHttpClient == null) {
 			if (host != null && !host.addr.equals("")){
 				sHttpClient = new HttpApi(host, host.timeout >= 0 ? host.timeout : Host.DEFAULT_TIMEOUT);
@@ -199,8 +177,8 @@ public abstract class ClientFactory {
 	 * Tries to find out which xbmc flavor and which API is running.
 	 * @param manager Upper layer reference
 	 */
-	private static void probeQueryApiType(final INotifiableManager manager) {
-		final Host host = HostFactory.host;
+	private void probeQueryApiType(final INotifiableManager manager) {
+		final Host host = (Host) getCurrentHostFromFactory();
 		
 		if (sApiType != API_TYPE_UNSET) {
 			return;
@@ -243,34 +221,5 @@ public abstract class ClientFactory {
 			sApiType = API_TYPE_UNSET;
 		}
 	}
-
-
-	/**
-	 * Returns an instance of the Event Server Client. Instantiation takes
-	 * place only once, otherwise the first instance is returned.
-	 * 
-	 * @param manager Upper layer reference
-	 * @return Client for XBMC's Event Server
-	 */
-	private static IEventClient createEventClient(final INotifiableManager manager) {
-		if (sEventClient == null) {
-			final Host host = HostFactory.host;
-			if (host != null) {
-				try {
-					final InetAddress addr = Inet4Address.getByName(host.addr);
-					sEventClient = new EventClient(addr, host.esPort > 0 ? host.esPort : Host.DEFAULT_EVENTSERVER_PORT, NAME);
-					Log.i(TAG, "EventClient created on " + addr);
-				} catch (UnknownHostException e) {
-					manager.onMessage("EventClient: Cannot parse address \"" + host.addr + "\".");
-					Log.e(TAG, "EventClient: Cannot parse address \"" + host.addr + "\".");
-					sEventClient = new EventClient(NAME);
-				}
-			} else {
-				manager.onMessage("EventClient: Failed to read host settings.");
-				Log.e(TAG, "EventClient: Failed to read host settings.");
-				sEventClient = new EventClient(NAME);
-			}
-		}
-		return sEventClient;
-	}
+	
 }

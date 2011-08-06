@@ -19,7 +19,7 @@
  *
  */
 
-package org.xbmc.android.remote.presentation.activity;
+package org.xbmc.android.remote.lib.presentation.activity;
 
 import android.app.Activity;
 import android.app.KeyguardManager;
@@ -29,7 +29,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.media.AudioManager;
 import android.preference.PreferenceManager;
 
-class ConfigurationManager implements OnSharedPreferenceChangeListener {
+public class ConfigurationManager implements OnSharedPreferenceChangeListener {
 
 	public final static String PREF_KEYGUARD_DISABLED = "setting_disable_keyguard";
 
@@ -51,7 +51,7 @@ class ConfigurationManager implements OnSharedPreferenceChangeListener {
 	
 	private KeyguardManager.KeyguardLock mKeyguardLock = null;
 
-	private ConfigurationManager(Activity activity) {
+	protected ConfigurationManager(Activity activity) {
 		mActivity = activity;
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
 		prefs.registerOnSharedPreferenceChangeListener(this);
